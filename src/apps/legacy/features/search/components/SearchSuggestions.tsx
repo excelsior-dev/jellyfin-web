@@ -7,6 +7,7 @@ import globalize from 'lib/globalize';
 import LinkButton from 'elements/emby-button/LinkButton';
 
 import 'elements/emby-button/emby-button';
+import itemHelper from 'components/itemHelper';
 
 type SearchSuggestionsProps = {
     parentId?: string | null;
@@ -36,7 +37,7 @@ const SearchSuggestions: FunctionComponent<SearchSuggestionsProps> = ({ parentId
                             style={{ display: 'inline-block', padding: '0.5em 1em' }}
                             href={appRouter.getRouteUrl(item)}
                         >
-                            {item.Name}
+                            {itemHelper.getDisplayName(item)}
                         </LinkButton>
                     </div>
                 ))}

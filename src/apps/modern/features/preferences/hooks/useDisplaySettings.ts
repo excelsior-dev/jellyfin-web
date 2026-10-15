@@ -47,16 +47,17 @@ export function useDisplaySettings({ userId }: UseDisplaySettingsParams) {
     }, [__legacyApiClient__, currentUser, userId]);
 
     const saveSettings = useCallback(async (newSettings: DisplaySettingsValues) => {
-        if (!userId || !userSettings || !__legacyApiClient__) {
+        if (!userId || !userSettings || !currentUser || !__legacyApiClient__) {
             return;
         }
         return saveDisplaySettings({
             api: __legacyApiClient__,
             newDisplaySettings: newSettings,
             userSettings,
+            currentUser,
             userId
         });
-    }, [__legacyApiClient__, userSettings, userId]);
+    }, [__legacyApiClient__, currentUser, userSettings, userId]);
 
     return {
         displaySettings,
@@ -105,7 +106,11 @@ async function loadDisplaySettings({
         screensaverTime: settings.screensaverTime(),
         backdropScreensaverInterval: settings.backdropScreensaverInterval(),
         slideshowInterval: settings.slideshowInterval(),
-        theme: settings.theme() || defaultTheme?.id || FALLBACK_THEME_ID
+        theme: settings.theme() || defaultTheme?.id || FALLBACK_THEME_ID,
+        originalTitlePreference: user?.Configuration?.OriginalTitlePreference ?? false,
+        originalTitlePreferenceLibraryIncludes: user?.Configuration?.OriginalTitlePreferenceLibraryIncludes || [],
+        originalTitlePreferenceLanguageScriptIncludes: user?.Configuration?.OriginalTitlePreferenceLanguageScriptIncludes?.join(',') || '',
+        originalTitlePreferenceLanguageScriptExcludes: user?.Configuration?.OriginalTitlePreferenceLanguageScriptExcludes?.join(',') || ''
     };
 
     return {
@@ -118,6 +123,7 @@ interface SaveDisplaySettingsParams {
     api: ApiClient;
     newDisplaySettings: DisplaySettingsValues
     userSettings: UserSettings;
+    currentUser: UserDto
     userId: string;
 }
 
@@ -125,9 +131,10 @@ async function saveDisplaySettings({
     api,
     newDisplaySettings,
     userSettings,
+    currentUser,
     userId
 }: SaveDisplaySettingsParams) {
-    const user = await api.getUser(userId);
+    const user = (!userId || userId === currentUser?.Id) ? currentUser : await api.getUser(userId);
 
     if (appHost.supports(AppFeature.DisplayLanguage)) {
         userSettings.language(normalizeValue(newDisplaySettings.language));
@@ -160,6 +167,10 @@ async function saveDisplaySettings({
 
     if (user.Id && user.Configuration) {
         user.Configuration.DisplayMissingEpisodes = newDisplaySettings.displayMissingEpisodes;
+        user.Configuration.OriginalTitlePreference = newDisplaySettings.originalTitlePreference;
+        user.Configuration.OriginalTitlePreferenceLibraryIncludes = newDisplaySettings.originalTitlePreferenceLibraryIncludes;
+        user.Configuration.OriginalTitlePreferenceLanguageScriptIncludes = newDisplaySettings.originalTitlePreferenceLanguageScriptIncludes?.split(',') || [];
+        user.Configuration.OriginalTitlePreferenceLanguageScriptExcludes = newDisplaySettings.originalTitlePreferenceLanguageScriptExcludes?.split(',') || [];
         promises.push(api.updateUserConfiguration(user.Id, user.Configuration));
     }
 

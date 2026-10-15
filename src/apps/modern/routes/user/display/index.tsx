@@ -40,6 +40,22 @@ export default function UserDisplayPreferences() {
         }
     }, [updateField, values]);
 
+    const handleCheckboxGroupFieldChange = useCallback((e: SelectChangeEvent | React.SyntheticEvent) => {
+        const target = e.target as HTMLInputElement;
+        const fieldName = target.name as keyof DisplaySettingsValues;
+        const fieldValue = target.value;
+        let groupValue = values?.[fieldName] as Array<string>;
+        if (groupValue.includes(fieldValue)) {
+            groupValue = groupValue.filter(val => val !== fieldValue);
+        } else {
+            groupValue.push(fieldValue);
+        }
+        updateField({
+            name: fieldName,
+            value: groupValue
+        });
+    }, [updateField, values]);
+
     if (loading || !values) {
         return <LoadingComponent />;
     }
@@ -66,6 +82,7 @@ export default function UserDisplayPreferences() {
                         />
                         <LibraryPreferences
                             onChange={handleFieldChange}
+                            onChangeCheckboxGroup={handleCheckboxGroupFieldChange}
                             values={values}
                         />
                         <NextUpPreferences

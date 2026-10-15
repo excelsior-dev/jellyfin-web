@@ -434,22 +434,24 @@ function renderName(item, container, context) {
     const parentNameHtml = [];
     let parentNameLast = false;
 
+    const seriesDisplayName = itemHelper.getSeriesDisplayName(item);
+
     if (item.AlbumArtists) {
         parentNameHtml.push(getArtistLinksHtml(item.AlbumArtists, item.ServerId, context));
         parentNameLast = true;
     } else if (item.ArtistItems?.length && item.Type === 'MusicVideo') {
         parentNameHtml.push(getArtistLinksHtml(item.ArtistItems, item.ServerId, context));
         parentNameLast = true;
-    } else if (item.SeriesName && item.Type === 'Episode') {
-        parentNameHtml.push(`<a style="color:inherit;" class="button-link itemAction" is="emby-linkbutton" href="#" data-action="${ItemAction.Link}" data-id="${item.SeriesId}" data-serverid="${item.ServerId}" data-type="Series" data-isfolder="true">${escapeHtml(item.SeriesName)}</a>`);
+    } else if (seriesDisplayName && item.Type === 'Episode') {
+        parentNameHtml.push(`<a style="color:inherit;" class="button-link itemAction" is="emby-linkbutton" href="#" data-action="${ItemAction.Link}" data-id="${item.SeriesId}" data-serverid="${item.ServerId}" data-type="Series" data-isfolder="true">${escapeHtml(seriesDisplayName)}</a>`);
     } else if (item.IsSeries || item.EpisodeTitle) {
         parentNameHtml.push(escapeHtml(item.Name));
     }
 
-    if (item.SeriesName && item.Type === 'Season') {
-        parentNameHtml.push(`<a style="color:inherit;" class="button-link itemAction" is="emby-linkbutton" href="#" data-action="${ItemAction.Link}" data-id="${item.SeriesId}" data-serverid="${item.ServerId}" data-type="Series" data-isfolder="true">${escapeHtml(item.SeriesName)}</a>`);
+    if (seriesDisplayName && item.Type === 'Season') {
+        parentNameHtml.push(`<a style="color:inherit;" class="button-link itemAction" is="emby-linkbutton" href="#" data-action="${ItemAction.Link}" data-id="${item.SeriesId}" data-serverid="${item.ServerId}" data-type="Series" data-isfolder="true">${escapeHtml(seriesDisplayName)}</a>`);
     } else if (item.ParentIndexNumber != null && item.Type === 'Episode') {
-        parentNameHtml.push(`<a style="color:inherit;" class="button-link itemAction" is="emby-linkbutton" href="#" data-action="${ItemAction.Link}" data-id="${item.SeasonId}" data-serverid="${item.ServerId}" data-type="Season" data-isfolder="true">${escapeHtml(item.SeasonName)}</a>`);
+        parentNameHtml.push(`<a style="color:inherit;" class="button-link itemAction" is="emby-linkbutton" href="#" data-action="${ItemAction.Link}" data-id="${item.SeasonId}" data-serverid="${item.ServerId}" data-type="Season" data-isfolder="true">${escapeHtml(seriesDisplayName)}</a>`);
     } else if (item.ParentIndexNumber != null && item.IsSeries) {
         parentNameHtml.push(escapeHtml(item.SeasonName || 'S' + item.ParentIndexNumber));
     } else if (item.Album && item.AlbumId && (item.Type === 'MusicVideo' || item.Type === 'Audio')) {
@@ -476,24 +478,26 @@ function renderName(item, container, context) {
         }
     }
 
-    const name = escapeHtml(itemHelper.getDisplayName(item, {
+    const name = itemHelper.getDisplayName(item, {
         includeParentInfo: false
-    }));
+    });
+
+    const secondaryName = itemHelper.getSecondaryDisplayName(item);
 
     if (html && !parentNameLast) {
         if (tvSeasonHtml) {
-            html += '<h3 class="itemName infoText subtitle focuscontainer-x"><bdi>' + tvSeasonHtml + ' - ' + name + '</bdi></h3>';
+            html += '<h3 class="itemName infoText subtitle focuscontainer-x"><bdi>' + tvSeasonHtml + ' - ' + escapeHtml(name) + '</bdi></h3>';
         } else {
-            html += '<h3 class="itemName infoText subtitle"><bdi>' + name + '</bdi></h3>';
+            html += '<h3 class="itemName infoText subtitle"><bdi>' + escapeHtml(name) + '</bdi></h3>';
         }
-    } else if (item.OriginalTitle && item.OriginalTitle != item.Name) {
-        html = '<h1 class="itemName infoText parentNameLast withOriginalTitle"><bdi>' + name + '</bdi></h1>' + html;
+    } else if (secondaryName && secondaryName != name) {
+        html = '<h1 class="itemName infoText parentNameLast withOriginalTitle"><bdi>' + escapeHtml(name) + '</bdi></h1>' + html;
     } else {
-        html = '<h1 class="itemName infoText parentNameLast"><bdi>' + name + '</bdi></h1>' + html;
+        html = '<h1 class="itemName infoText parentNameLast"><bdi>' + escapeHtml(name) + '</bdi></h1>' + html;
     }
 
-    if (item.OriginalTitle && item.OriginalTitle != item.Name) {
-        html += '<h4 class="itemName infoText originalTitle">' + escapeHtml(item.OriginalTitle) + '</h4>';
+    if (secondaryName && secondaryName != name) {
+        html += '<h4 class="itemName infoText originalTitle">' + escapeHtml(secondaryName) + '</h4>';
     }
 
     container.innerHTML = html;

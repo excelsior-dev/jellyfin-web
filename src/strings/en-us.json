@@ -1945,5 +1945,13 @@
     "LabelPlayerSizes": "Player sizes",
     "LabelPlaybackQuality": "Frame dropped / corrupted",
     "AudioLanguages": "Audio languages",
-    "SubtitleLanguages": "Subtitle languages"
+    "SubtitleLanguages": "Subtitle languages",
+    "OriginalTitlePreferenceLabel": "Prefer original titles",
+    "OriginalTitlePreferenceHelp": "Prefer displaying original titles when possible.",
+    "OriginalTitlePreferenceLibraryIncludesLabel": "Select libraries to include",
+    "OriginalTitlePreferenceLibraryIncludesHelp": "Prefer original titles only from selected libraries.",
+    "OriginalTitlePreferenceLanguageScriptIncludesLabel": "Prefer original titles only in language / script",
+    "OriginalTitlePreferenceLanguageScriptIncludesHelp": "Comma delimited list of language-script pairs concatenated with dash. Evaluated in order until first match. Format is 2-letter language (ISO 639-1) and 4-letter script (ISO 15924) codes. Example: 'en,fr-Latn,Cyrl'.",
+    "OriginalTitlePreferenceLanguageScriptExcludesLabel": "Never prefer original titles in language / script",
+    "OriginalTitlePreferenceLanguageScriptExcludesHelp": "Exclusion list is evaluated after the inclusion i.e. if item matches inclusion list and doesn't exclusion, it won't be matched."
 }

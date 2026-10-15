@@ -11,6 +11,7 @@ const fetchUserViews = async (
     params?: UserViewApiGetUserViewsRequest,
     options?: AxiosRequestConfig
 ) => {
+    options = { ...options, params: { ...options?.params, asUngrouped: params?.asUngrouped } };
     const response = await getUserViewApi(api)
         .getUserViews(params, options);
     return response.data;

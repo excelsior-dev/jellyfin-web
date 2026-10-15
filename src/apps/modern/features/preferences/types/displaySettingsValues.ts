@@ -21,4 +21,8 @@ export interface DisplaySettingsValues {
     backdropScreensaverInterval: number;
     slideshowInterval: number;
     theme: string;
+    originalTitlePreference: boolean;
+    originalTitlePreferenceLibraryIncludes: Array<string>;
+    originalTitlePreferenceLanguageScriptIncludes: string;
+    originalTitlePreferenceLanguageScriptExcludes: string;
 }

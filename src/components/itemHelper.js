@@ -19,7 +19,8 @@ export function getDisplayName(item, options = {}) {
         item = item.ProgramInfo || item;
     }
 
-    let name = ((item.Type === 'Program' || item.Type === 'Recording') && (item.IsSeries || item.EpisodeTitle) ? item.EpisodeTitle : item.Name) || '';
+    const selectedName = item.PrimaryDisplayName ?? item.Name;
+    let name = ((item.Type === 'Program' || item.Type === 'Recording') && (item.IsSeries || item.EpisodeTitle) ? item.EpisodeTitle : selectedName) || '';
 
     if (item.Type === 'TvChannel') {
         if (item.ChannelNumber) {
@@ -52,6 +53,14 @@ export function getDisplayName(item, options = {}) {
     }
 
     return name;
+}
+
+export function getSecondaryDisplayName(item) {
+    return item.SecondaryDisplayName ?? item.OriginalTitle;
+}
+
+export function getSeriesDisplayName(item) {
+    return item.SeriesName;
 }
 
 export function supportsAddingToCollection(item) {
@@ -354,6 +363,8 @@ export function sortTracks (trackA, trackB) {
 
 export default {
     getDisplayName: getDisplayName,
+    getSecondaryDisplayName: getSecondaryDisplayName,
+    getSeriesDisplayName: getSeriesDisplayName,
     supportsAddingToCollection: supportsAddingToCollection,
     supportsAddingToPlaylist: supportsAddingToPlaylist,
     isLocalItem: isLocalItem,

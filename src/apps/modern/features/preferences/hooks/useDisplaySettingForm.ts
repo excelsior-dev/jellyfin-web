@@ -9,7 +9,7 @@ import { useDisplaySettings } from './useDisplaySettings';
 
 type UpdateField = {
     name: keyof DisplaySettingsValues;
-    value: string | boolean;
+    value: string | boolean | Array<string>;
 };
 
 export function useDisplaySettingForm() {
